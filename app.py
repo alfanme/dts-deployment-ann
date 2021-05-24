@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, send_from_directory
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from tensorflow import expand_dims
+import numpy as np
 import os
 
 app = Flask(__name__)
@@ -14,7 +15,7 @@ def predict_label(img_path):
     loaded_img = load_img(img_path, target_size=(256, 256))
     img_array = img_to_array(loaded_img) / 255.0
     img_array = expand_dims(img_array, 0)
-    predicted_bit = model.predict_classes(img_array)[0][0]
+    predicted_bit = np.round(model.predict(img_array)[0][0]).astype('int')
     return class_dict[predicted_bit]
 
 @app.route('/', methods=['GET', 'POST'])
